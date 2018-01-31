@@ -1,7 +1,7 @@
 {
     "name": "php-constructor",
     "displayName": "PHP Constructor",
-    "description": "Add constructor property to php class",
+    "description": "Initialize php constructor properties",
     "version": "0.0.1",
     "publisher": "MehediDracula",
     "author": "Mehedi Hassan <MehediDracula@gmail.com>",
