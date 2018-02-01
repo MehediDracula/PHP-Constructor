@@ -31,6 +31,6 @@ PHP Constructor can initialize constructor properties like `insert_php_construct
 
 ## License
 
-[MIT](LICENSE) License.
+MIT [License](LICENSE).
 
 Copyright (c) 2018 Mehedi Hassan
