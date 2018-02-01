@@ -83,17 +83,19 @@ module.exports = class PropertyInserter {
             '\t\t\\$this->${1:property} = \\$${1:property};$0\n' +
         '\t}';
 
-        let nextLineOfInsertLineText = this.activeEditor().document.lineAt(insertLine).text;
+        let nextLineOfInsertLine = this.activeEditor().document.lineAt(insertLine.lineNumber + 1);
 
-        // If there is no new line after insert line then append new line.
-        if (nextLineOfInsertLineText !== '') {
+        if (insertLine.text.endsWith('}')) {
+            // Insert line is class closing brace so add one new line.
+            snippet += '\n';
+        } else if (insertLine.text === '' && ! nextLineOfInsertLine.text.endsWith('}')) {
+            // Insert line is empty and next line is not class closing brace so add one new line.
             snippet += '\n';
         }
 
-        // If there is no new line after insert line and is not
-        // class closing brace then append another new line.
-        if (nextLineOfInsertLineText !== '' && ! nextLineOfInsertLineText.endsWith('}')) {
-            snippet += '\n';
+        if (insertLine.text !== '' && ! insertLine.text.endsWith('}')) {
+            //Insert line is not empty and next line is not class closing brace so add two new line.
+            snippet += '\n\n';
         }
 
         this.activeEditor().insertSnippet(
@@ -161,12 +163,12 @@ module.exports = class PropertyInserter {
     }
 
     gotoLine(declarations) {
-        let insertLine = this.getInsertLine(declarations);
+        let insertLineNumber = this.getInsertLine(declarations);
 
-        let line = this.activeEditor().document.lineAt(insertLine);
-        this.activeEditor().revealRange(line.range);
+        let insertLine = this.activeEditor().document.lineAt(insertLineNumber);
+        this.activeEditor().revealRange(insertLine.range);
 
-        let newPosition = new vscode.Position(line.lineNumber, 0);
+        let newPosition = new vscode.Position(insertLineNumber, 0);
         this.activeEditor().selection = new vscode.Selection(newPosition, newPosition);
 
         return insertLine;
