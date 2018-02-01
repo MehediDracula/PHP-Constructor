@@ -48,7 +48,7 @@ module.exports = class PropertyInserter {
             }
 
             if (/(public|protected|private|static) \$/.test(textLine)) {
-                declarations.lastPropertyLineNumber = line;
+                declarations.lastPropertyLineNumber = this.findPropertyLastLine(doc, line, textLine);
             }
 
             if (/function __construct\(/.test(textLine)) {
@@ -178,6 +178,18 @@ module.exports = class PropertyInserter {
         let lineNumber = declarations.lastPropertyLineNumber || declarations.traitUseLineNumber || declarations.classLineNumber;
 
         return ++lineNumber;
+    }
+
+    findPropertyLastLine(doc, start) {
+        for (let line = start; line < doc.lineCount; line++) {
+            let textLine = doc.lineAt(line).text;
+
+            if (textLine.trim().endsWith(';')) {
+                return line;
+            }
+        }
+
+        throw 'Invalid PHP file. At least one property is not properly closed.';
     }
 
     activeEditor() {
