@@ -111,14 +111,14 @@ module.exports = class PropertyInserter {
         let constructorLineText = this.activeEditor().document.getText(declarations.constructorRange);
 
         // Split constructor arguments.
-        let consturctor = constructorLineText.split(/\((.+?)\)/);
+        let constructor = constructorLineText.split(/\((.+?)\)/);
 
         // Escape all "$" signs of constructor arguments otherwise
         // vscode will assume "$" sign is a snippet placeholder.
-        let previousVars = consturctor[1].replace(/\$/g, '\\$');
+        let previousVars = constructor[1].replace(/\$/g, '\\$');
 
         // Merge constructor line with new snippet placeholder.
-        snippet += `${consturctor[0]}(${previousVars}\,\ \\$\${1:property})`;
+        snippet += `${constructor[0]}(${previousVars}\,\ \\$\${1:property})`;
 
         let constructorClosingLine;
 
