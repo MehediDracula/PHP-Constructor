@@ -6,7 +6,11 @@ function activate(context) {
 
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('phpConstructor.insert', () => inserter.insert())
+        vscode.commands.registerCommand('phpConstructor.insert', () => {
+            if (vscode.window.activeTextEditor !== undefined) {
+                inserter.insert();
+            }
+        })
     );
 
     context.subscriptions.push(inserter);
