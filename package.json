@@ -18,7 +18,7 @@
         "constructor"
     ],
     "galleryBanner": {
-        "color": "#282c34",
+        "color": "#f91450b",
         "theme": "dark"
     },
     "activationEvents": [
