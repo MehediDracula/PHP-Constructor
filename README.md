@@ -2,18 +2,22 @@
 
 PHP Constructor can initialize constructor properties like `insert_php_constructor_property` command of [SublimePHPCompanion](https://github.com/erichard/SublimePHPCompanion#insert_php_constructor_property).
 
-
 ## Demo
 
 ![](https://i.imgur.com/03N9voW.gif)
 
 ## Commands
 
-Search `Insert Constructor Property`command on command palette.
+```javaScript
+[
+    {
+        "title": "Insert Constructor Property",
+        "command": "phpConstructor.insert"
+    }
+]
+```
 
 ## Settings
-
-You can override the default according to your needs.
 
 ```javascript
 {
