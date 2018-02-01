@@ -78,7 +78,7 @@ module.exports = class PropertyInserter {
         }
 
         snippet += `\t${this.config('visibility')}` + ' \\$${1:property};\n\n' +
-        '\tpublic function __construct(\\$${1:property})\n' +
+        `\t${this.config('constructor_visibility')}` + ' function __construct(\\$${1:property})\n' +
         '\t{\n' +
             '\t\t\\$this->${1:property} = \\$${1:property};$0\n' +
         '\t}';
