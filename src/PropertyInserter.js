@@ -48,7 +48,7 @@ module.exports = class PropertyInserter {
             }
 
             if (/(public|protected|private|static) \$/.test(textLine)) {
-                declarations.lastPropertyLineNumber = line;
+                declarations.lastPropertyLineNumber = this.findPropertyLastLine(doc, line, textLine);
             }
 
             if (/function __construct\(/.test(textLine)) {
@@ -78,7 +78,7 @@ module.exports = class PropertyInserter {
         }
 
         snippet += `\t${this.config('visibility')}` + ' \\$${1:property};\n\n' +
-        '\tpublic function __construct(\\$${1:property})\n' +
+        `\t${this.config('constructor_visibility')}` + ' function __construct(\\$${1:property})\n' +
         '\t{\n' +
             '\t\t\\$this->${1:property} = \\$${1:property};$0\n' +
         '\t}';
@@ -111,14 +111,14 @@ module.exports = class PropertyInserter {
         let constructorLineText = this.activeEditor().document.getText(declarations.constructorRange);
 
         // Split constructor arguments.
-        let consturctor = constructorLineText.split(/\((.+?)\)/);
+        let constructor = constructorLineText.split(/\((.+?)\)/);
 
         // Escape all "$" signs of constructor arguments otherwise
         // vscode will assume "$" sign is a snippet placeholder.
-        let previousVars = consturctor[1].replace(/\$/g, '\\$');
+        let previousVars = constructor[1].replace(/\$/g, '\\$');
 
         // Merge constructor line with new snippet placeholder.
-        snippet += `${consturctor[0]}(${previousVars}\,\ \\$\${1:property})`;
+        snippet += `${constructor[0]}(${previousVars}\,\ \\$\${1:property})`;
 
         let constructorClosingLine;
 
@@ -178,6 +178,18 @@ module.exports = class PropertyInserter {
         let lineNumber = declarations.lastPropertyLineNumber || declarations.traitUseLineNumber || declarations.classLineNumber;
 
         return ++lineNumber;
+    }
+
+    findPropertyLastLine(doc, start) {
+        for (let line = start; line < doc.lineCount; line++) {
+            let textLine = doc.lineAt(line).text;
+
+            if (textLine.trim().endsWith(';')) {
+                return line;
+            }
+        }
+
+        throw 'Invalid PHP file. At least one property is not properly closed.';
     }
 
     activeEditor() {
