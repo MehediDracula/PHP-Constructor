@@ -21,7 +21,8 @@ PHP Constructor can initialize constructor properties like `insert_php_construct
 
 ```javascript
 {
-    "phpConstructor.visibility": "protected",  // Default property visibility modifier
+    "phpConstructor.visibility": "protected",   // Default property visibility modifier
+    "phpConstructor.constructor_visibility": "public"   // Default constructor visibility modifier
 }
 ```
 
