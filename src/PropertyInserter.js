@@ -35,7 +35,7 @@ module.exports = class PropertyInserter {
             if (/class \w/.test(textLine)) {
                 let lineNumber = line;
 
-                // If class closing brace isn't inline then increment lineNumber
+                // If class closing brace isn't inline then increment lineNumber.
                 if (! textLine.endsWith('{')){
                     lineNumber++;
                 }
@@ -51,7 +51,7 @@ module.exports = class PropertyInserter {
                 declarations.lastPropertyLineNumber = this.findPropertyLastLine(doc, line, textLine);
             }
 
-            if (/function __construct\(/.test(textLine)) {
+            if (/function __construct/.test(textLine)) {
                 declarations.constructorLineNumber = line;
                 declarations.constructorRange = doc.lineAt(line).range;
             }
@@ -59,7 +59,7 @@ module.exports = class PropertyInserter {
             if (declarations.constructorLineNumber !== null && /[ \t].+}/.test(textLine)) {
                 declarations.constructorClosingLineNumber = line;
 
-                // If constructor is found no need to parse anymore.
+                // If constructor is found then no need to parse anymore.
                 break;
             }
         }
@@ -73,7 +73,7 @@ module.exports = class PropertyInserter {
         let snippet = '\n';
 
         if (! declarations.lastPropertyLineNumber && ! declarations.traitUseLineNumber) {
-            // If no property and trait uses is found then no need need prepend a line break.
+            // If no property and trait uses is found then no need to prepend a line break.
             snippet = '';
         }
 
@@ -85,11 +85,11 @@ module.exports = class PropertyInserter {
 
         let nextLineOfInsertLine = this.activeEditor().document.lineAt(insertLine.lineNumber + 1);
 
-        if (insertLine.text.endsWith('}')) {
-            // Insert line is class closing brace so add one new line.
-            snippet += '\n';
-        } else if (insertLine.text === '' && ! nextLineOfInsertLine.text.endsWith('}')) {
-            // Insert line is empty and next line is not class closing brace so add one new line.
+        // If insert line is class closing brace or insert line is empty and
+        // next line is not class closing brace then add one new line.
+        if (insertLine.text.endsWith('}') ||
+            (insertLine.text === '' && ! nextLineOfInsertLine.text.endsWith('}'))
+        ) {
             snippet += '\n';
         }
 
@@ -111,14 +111,20 @@ module.exports = class PropertyInserter {
         let constructorLineText = this.activeEditor().document.getText(declarations.constructorRange);
 
         // Split constructor arguments.
-        let constructor = constructorLineText.split(/\((.+?)\)/);
+        let constructor = constructorLineText.split(/\((.*?)\)/);
+
+        snippet += `${constructor[0]}(`;
 
         // Escape all "$" signs of constructor arguments otherwise
         // vscode will assume "$" sign is a snippet placeholder.
         let previousVars = constructor[1].replace(/\$/g, '\\$');
 
-        // Merge constructor line with new snippet placeholder.
-        snippet += `${constructor[0]}(${previousVars}\,\ \\$\${1:property})`;
+        if (previousVars.length !== 0)  {
+            // Append previous constructor arguments.
+            snippet += `${previousVars}\, `;
+        }
+
+        snippet += '\\$\${1:property})';
 
         let constructorClosingLine;
 
