@@ -48,12 +48,13 @@ module.exports = class PropertyInserter {
             }
 
             if (/(public|protected|private|static) \$/.test(textLine)) {
-                declarations.lastPropertyLineNumber = this.findPropertyLastLine(doc, line, textLine);
+                declarations.lastPropertyLineNumber = this.findPropertyLastLine(doc, line);
             }
 
             if (/function __construct/.test(textLine)) {
                 declarations.constructorLineNumber = line;
-                declarations.constructorRange = doc.lineAt(line).range;
+
+                declarations.constructorRange = this.findConstructorRange(doc, line);
             }
 
             if (declarations.constructorLineNumber !== null && /[ \t].+}/.test(textLine)) {
@@ -103,12 +104,23 @@ module.exports = class PropertyInserter {
         );
     }
 
-    insertConstructorProperty(declarations) {
+    async insertConstructorProperty(declarations) {
         this.gotoLine(declarations);
 
         let snippet = `\t${this.config('visibility')}` + ' \\$${1:property};\n\n';
 
+        let constructorStartLineNumber = declarations.constructorRange.start.line;
         let constructorLineText = this.activeEditor().document.getText(declarations.constructorRange);
+
+        if (constructorLineText.endsWith('/**')) {
+            snippet += await this.getConstructorDocblock(declarations.constructorRange);
+
+            // console.log(await this.getConstructorLine(declarations.constructorRange));return;
+            let constructor = await this.getConstructorLine(declarations.constructorRange);
+
+            constructorStartLineNumber = constructor.line;
+            constructorLineText = constructor.textLine;
+        }
 
         // Split constructor arguments.
         let constructor = constructorLineText.split(/\((.*?)\)/);
@@ -117,19 +129,19 @@ module.exports = class PropertyInserter {
 
         // Escape all "$" signs of constructor arguments otherwise
         // vscode will assume "$" sign is a snippet placeholder.
-        let previousVars = constructor[1].replace(/\$/g, '\\$');
+        let previousArgs = constructor[1].replace(/\$/g, '\\$');
 
-        if (previousVars.length !== 0)  {
-            // Append previous constructor arguments.
-            snippet += `${previousVars}\, `;
+        if (previousArgs.length !== 0)  {
+            // Add previous constructor arguments.
+            snippet += `${previousArgs}\, `;
         }
 
         snippet += '\\$\${1:property})';
 
         let constructorClosingLine;
 
-        // Append all previous property assignments to the snippet.
-        for (var line = declarations.constructorRange.start.line; line < declarations.constructorClosingLineNumber; line++) {
+        // Add all previous property assignments to the snippet.
+        for (var line = constructorStartLineNumber; line < declarations.constructorClosingLineNumber; line++) {
             let propertyAssignment = this.activeEditor().document.lineAt(line + 1);
 
             constructorClosingLine = propertyAssignment;
@@ -186,16 +198,70 @@ module.exports = class PropertyInserter {
         return ++lineNumber;
     }
 
-    findPropertyLastLine(doc, start) {
-        for (let line = start; line < doc.lineCount; line++) {
+    findPropertyLastLine(doc, line) {
+        for (line; line < doc.lineCount; line++) {
             let textLine = doc.lineAt(line).text;
 
-            if (textLine.trim().endsWith(';')) {
+            if (textLine.endsWith(';')) {
                 return line;
             }
         }
+    }
 
-        throw 'Invalid PHP file. At least one property is not properly closed.';
+    constructorHasDocBlock(doc, line) {
+        return doc.lineAt(line).text.endsWith('*/');
+    }
+
+    findConstructorRange(doc, line) {
+        if (! doc.lineAt(line - 1).text.endsWith('*/')) {
+            // Constructor doesn't have any docblock.
+            return doc.lineAt(line).range;
+        }
+
+        for (line; line < doc.lineCount; line--) {
+            let textLine = doc.lineAt(line).text;
+
+            if (textLine.endsWith('/**')) {
+                return doc.lineAt(line).range;
+            }
+        }
+    }
+
+    async getConstructorDocblock(range) {
+        let doc = await vscode.workspace.openTextDocument(this.activeDocument().uri);
+
+        let line = range.start.line;
+
+        let docblock = '';
+
+        for (line; line < doc.lineCount; line++) {
+            let textLine = doc.lineAt(line).text;
+
+            if (/function __construct/.test(textLine)) {
+                break;
+            }
+
+            docblock += `${textLine}\n`;
+        }
+
+        return docblock.replace(/\$/g, '\\$');
+    }
+
+    async getConstructorLine(range) {
+        let doc = await vscode.workspace.openTextDocument(this.activeDocument().uri);
+
+        let line = range.start.line;
+
+        for (line; line < doc.lineCount; line++) {
+            let textLine = doc.lineAt(line).text;
+
+            if (/function __construct/.test(textLine)) {
+                return {
+                    line,
+                    textLine,
+                };
+            }
+        }
     }
 
     activeEditor() {
