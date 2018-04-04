@@ -10,6 +10,10 @@ module.exports = class PropertyInserter {
 
         let declarations = await this.getDeclarations(activeDocument);
 
+        if (declarations.classLineNumber === null) {
+            return;
+        }
+
         if (declarations.constructorLineNumber === null) {
             this.insertConstructor(declarations);
         } else {
