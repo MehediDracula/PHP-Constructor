@@ -32,7 +32,7 @@ module.exports = class PropertyInserter {
         for (let line = 0; line < doc.lineCount; line++) {
             let textLine = doc.lineAt(line).text;
 
-            if (/class \w/.test(textLine)) {
+            if (/^(final |abstract )?class \w/.test(textLine)) {
                 let lineNumber = line;
 
                 // If class closing brace isn't inline then increment lineNumber.
@@ -115,7 +115,6 @@ module.exports = class PropertyInserter {
         if (constructorLineText.endsWith('/**')) {
             snippet += await this.getConstructorDocblock(declarations.constructorRange);
 
-            // console.log(await this.getConstructorLine(declarations.constructorRange));return;
             let constructor = await this.getConstructorLine(declarations.constructorRange);
 
             constructorStartLineNumber = constructor.line;
