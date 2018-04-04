@@ -1,6 +1,6 @@
 const vscode = require('vscode');
 
-module.exports = class PropertyInserter {
+class PropertyInserter {
     async insert() {
         let activeDocument = this.activeDocument().uri;
 
@@ -40,7 +40,7 @@ module.exports = class PropertyInserter {
                 let lineNumber = line;
 
                 // If class closing brace isn't inline then increment lineNumber.
-                if (! textLine.endsWith('{')){
+                if (! textLine.endsWith('{')) {
                     lineNumber++;
                 }
 
@@ -259,10 +259,7 @@ module.exports = class PropertyInserter {
             let textLine = doc.lineAt(line).text;
 
             if (/function __construct/.test(textLine)) {
-                return {
-                    line,
-                    textLine,
-                };
+                return { line, textLine };
             }
         }
     }
@@ -279,3 +276,5 @@ module.exports = class PropertyInserter {
         return vscode.workspace.getConfiguration('phpConstructor').get(key);
     }
 }
+
+module.exports = PropertyInserter;
