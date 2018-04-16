@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "php-constructor" extension will be documented in this file.
 
+## [0.0.9]
+- Add support for trait
+
 ## [0.0.8]
 - Don't insert constructor if class declaration is not found
 
