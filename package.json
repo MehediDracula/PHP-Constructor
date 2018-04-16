@@ -43,7 +43,12 @@
                     "default": "protected",
                     "description": "Default property visibility modifier"
                 },
-                "phpConstructor.chooseVisibility": {
+                "phpConstructor.choosePropertyVisibility": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Choose property visibility modifier"
+                },
+                "phpConstructor.chooseConstructorVisibility": {
                     "type": "boolean",
                     "default": false,
                     "description": "Choose constructor visibility modifier"

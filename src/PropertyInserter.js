@@ -85,10 +85,18 @@ class PropertyInserter {
             snippet = '';
         }
 
-        snippet += `\t${this.config('visibility')}` + ' \\$${1:property};\n\n\t';
+        snippet = '\t';
 
-        if (this.config('chooseConstructorVisibility')) {
+        if (this.config('choosePropertyVisibility', false)) {
             snippet += '${2|public,private|}';
+        } else {
+            snippet += this.config('visibility', 'protected');
+        }
+
+        snippet += ' \\$${1:property};\n\n\t';
+
+        if (this.config('chooseConstructorVisibility', false)) {
+            snippet += '${3|public,private|}';
         } else {
             snippet += 'public';
         }
@@ -122,7 +130,15 @@ class PropertyInserter {
     async insertConstructorProperty(declarations) {
         this.gotoLine(declarations);
 
-        let snippet = `\t${this.config('visibility')}` + ' \\$${1:property};\n\n';
+        let snippet = '\t';
+
+        if (this.config('choosePropertyVisibility', false)) {
+            snippet += '${2|public,private|}';
+        } else {
+            snippet += this.config('visibility', 'protected');
+        }
+
+        snippet += ' \\$${1:property};\n\n';
 
         let constructorStartLineNumber = declarations.constructorRange.start.line;
         let constructorLineText = this.activeEditor().document.getText(declarations.constructorRange);
@@ -283,8 +299,14 @@ class PropertyInserter {
         return this.activeEditor().document;
     }
 
-    config(key) {
-        return vscode.workspace.getConfiguration('phpConstructor').get(key);
+    config(key, defaultValue) {
+        let config = vscode.workspace.getConfiguration('phpConstructor').get(key);
+
+        if (! config) {
+            return defaultValue;
+        }
+
+        return config;
     }
 }
 
