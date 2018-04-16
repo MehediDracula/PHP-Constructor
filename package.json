@@ -43,10 +43,10 @@
                     "default": "protected",
                     "description": "Default property visibility modifier"
                 },
-                "phpConstructor.constructor_visibility": {
-                    "type": "string",
-                    "default": "public",
-                    "description": "Default constructor visibility modifier"
+                "phpConstructor.chooseVisibility": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Choose constructor visibility modifier"
                 }
             }
         }

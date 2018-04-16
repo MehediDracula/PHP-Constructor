@@ -85,8 +85,15 @@ class PropertyInserter {
             snippet = '';
         }
 
-        snippet += `\t${this.config('visibility')}` + ' \\$${1:property};\n\n' +
-        `\t${this.config('constructor_visibility')} ` + 'function __construct(\\$${1:property})\n' +
+        snippet += `\t${this.config('visibility')}` + ' \\$${1:property};\n\n\t';
+
+        if (this.config('chooseConstructorVisibility')) {
+            snippet += '${2|public,private|}';
+        } else {
+            snippet += 'public';
+        }
+
+        snippet += ' function __construct(\\$${1:property})\n' +
         '\t{\n' +
             '\t\t\\$this->${1:property} = \\$${1:property};$0\n' +
         '\t}';
