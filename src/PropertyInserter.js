@@ -51,7 +51,10 @@ class PropertyInserter {
                 declarations.traitUseLineNumber = line;
             }
 
-            if (/(public|protected|private|static) \$/.test(textLine)) {
+            if (
+                /(public|protected|private|static) \$/.test(textLine) ||
+                /const \w+\s+?=/.test(textLine)
+            ) {
                 declarations.lastPropertyLineNumber = this.findPropertyLastLine(doc, line);
             }
 
@@ -92,7 +95,8 @@ class PropertyInserter {
 
         // If insert line is class closing brace or insert line is empty and
         // next line is not class closing brace then add one new line.
-        if (insertLine.text.endsWith('}') ||
+        if (
+            insertLine.text.endsWith('}') ||
             (insertLine.text === '' && ! nextLineOfInsertLine.text.endsWith('}'))
         ) {
             snippet += '\n';
