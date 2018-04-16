@@ -36,7 +36,7 @@ class PropertyInserter {
         for (let line = 0; line < doc.lineCount; line++) {
             let textLine = doc.lineAt(line).text;
 
-            if (/^(final |abstract )?class \w/.test(textLine)) {
+            if (/^(final |abstract )?(class|trait) \w/.test(textLine)) {
                 let lineNumber = line;
 
                 // If class closing brace isn't inline then increment lineNumber.
