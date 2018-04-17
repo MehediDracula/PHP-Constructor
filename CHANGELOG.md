@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to the "php-constructor" extension will be documented in this file.
 
+## [0.0.10]
+- Add config for choosing property visibility
+- Add config for choosing constructor visibility
+- Remove `constructor_visibility` config
+- Detect class constants
+
 ## [0.0.9]
 - Add support for trait
 
