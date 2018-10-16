@@ -85,7 +85,7 @@ class PropertyInserter {
             snippet = '';
         }
 
-        snippet = '\t';
+        snippet = this.getIndentation();
 
         if (this.config('choosePropertyVisibility', false)) {
             snippet += '${2|public,private|}';
@@ -93,7 +93,7 @@ class PropertyInserter {
             snippet += this.config('visibility', 'protected');
         }
 
-        snippet += ' \\$${1:property};\n\n\t';
+        snippet += ' \\$${1:property};\n\n' + this.getIndentation();
 
         if (this.config('chooseConstructorVisibility', false)) {
             snippet += '${3|public,private|}';
@@ -102,9 +102,9 @@ class PropertyInserter {
         }
 
         snippet += ' function __construct(\\$${1:property})\n' +
-        '\t{\n' +
-            '\t\t\\$this->${1:property} = \\$${1:property};$0\n' +
-        '\t}';
+        this.getIndentation() + '{\n' +
+            this.getIndentation(2) + '\\$this->${1:property} = \\$${1:property};$0\n' +
+            this.getIndentation() + '}';
 
         let nextLineOfInsertLine = this.activeEditor().document.lineAt(insertLine.lineNumber + 1);
 
@@ -130,7 +130,7 @@ class PropertyInserter {
     async insertConstructorProperty(declarations) {
         this.gotoLine(declarations);
 
-        let snippet = '\t';
+        let snippet = this.getIndentation();
 
         if (this.config('choosePropertyVisibility', false)) {
             snippet += '${2|public,private|}';
@@ -183,8 +183,8 @@ class PropertyInserter {
         // Slice constructor closing brace.
         snippet = snippet.slice(0, -1);
 
-        snippet += '\t\\$this->${1:property} = \\$${1:property};$0';
-        snippet += '\n\t}';
+        snippet += this.getIndentation() + '\\$this->${1:property} = \\$${1:property};$0';
+        snippet += '\n' + this.getIndentation() +'}';
 
         let nextLineOfConstructorClosing = this.activeEditor().document.lineAt(constructorClosingLine.lineNumber + 1).text;
 
@@ -297,6 +297,17 @@ class PropertyInserter {
 
     activeDocument() {
         return this.activeEditor().document;
+    }
+
+    getIndentation(level = 1) {
+        let singleLevel;
+        let activeResource = vscode.window.activeTextEditor.document.uri;
+        if (!vscode.workspace.getConfiguration('editor', activeResource).get('insertSpaces')) {
+            singleLevel = '\t';
+        } else {
+            singleLevel = " ".repeat(vscode.workspace.getConfiguration('editor', activeResource).get('tabSize'));
+        }
+        return singleLevel.repeat(level);
     }
 
     config(key, defaultValue) {
