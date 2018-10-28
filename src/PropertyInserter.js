@@ -88,7 +88,7 @@ class PropertyInserter {
         snippet = this.getIndentation();
 
         if (this.config('choosePropertyVisibility', false)) {
-            snippet += '${2|public,private|}';
+            snippet += '${2|'+this.getVisibilityChoice(this.config('visibility', 'protected'))+'|}';
         } else {
             snippet += this.config('visibility', 'protected');
         }
@@ -96,9 +96,9 @@ class PropertyInserter {
         snippet += ' \\$${1:property};\n\n' + this.getIndentation();
 
         if (this.config('chooseConstructorVisibility', false)) {
-            snippet += '${3|public,private|}';
+            snippet += '${3|'+this.getVisibilityChoice(this.config('constructorVisibility', 'public'))+'|}';
         } else {
-            snippet += 'public';
+            snippet += this.config('visibility', 'public');
         }
 
         snippet += ' function __construct(\\$${1:property})\n' +
@@ -133,7 +133,7 @@ class PropertyInserter {
         let snippet = this.getIndentation();
 
         if (this.config('choosePropertyVisibility', false)) {
-            snippet += '${2|public,private|}';
+            snippet += '${2|'+this.getVisibilityChoice(this.config('visibility', 'protected'))+'|}';
         } else {
             snippet += this.config('visibility', 'protected');
         }
@@ -308,6 +308,14 @@ class PropertyInserter {
             singleLevel = " ".repeat(vscode.workspace.getConfiguration('editor', activeResource).get('tabSize'));
         }
         return singleLevel.repeat(level);
+    }
+
+    getVisibilityChoice(defaultValue) {
+        let visibilityChoices = ["public", "protected", "private"];
+        if (visibilityChoices.indexOf(defaultValue) !== -1) {
+            visibilityChoices.splice(visibilityChoices.indexOf(defaultValue), 1);
+        }
+        return [defaultValue, ...visibilityChoices].join(",");
     }
 
     config(key, defaultValue) {
