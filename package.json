@@ -41,17 +41,24 @@
                 "phpConstructor.visibility": {
                     "type": "string",
                     "default": "protected",
+                    "enum": ["protected", "private", "public"],
                     "description": "Default property visibility modifier"
+                },
+                "phpConstructor.constructorVisibility": {
+                    "type": "string",
+                    "default": "public",
+                    "enum": ["public", "protected", "private"],
+                    "description": "Default constructor visibility modifier"
                 },
                 "phpConstructor.choosePropertyVisibility": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Choose property visibility modifier"
+                    "description": "Choose property visibility modifier in snippet"
                 },
                 "phpConstructor.chooseConstructorVisibility": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Choose constructor visibility modifier"
+                    "description": "Choose constructor visibility modifier in snippet"
                 }
             }
         }
