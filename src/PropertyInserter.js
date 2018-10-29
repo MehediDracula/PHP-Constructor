@@ -153,25 +153,25 @@ class PropertyInserter {
         }
 
         // Split constructor arguments.
-        let constructor = constructorLineText.split(/\(([\s\S]*?)\)/);
+        let constructor = constructorLineText.split(/\((.*?)\)/);
 
         snippet += `${constructor[0]}(`;
 
         // Escape all "$" signs of constructor arguments otherwise
         // vscode will assume "$" sign is a snippet placeholder.
-        let previousArgs = constructor[1].replace(/\$/g, '\\$').replace(/\s+/g, ' ').trim();
+        let previousArgs = constructor[1].replace(/\$/g, '\\$');
 
         if (previousArgs.length !== 0)  {
             // Add previous constructor arguments.
             snippet += `${previousArgs}\, `;
         }
 
-        snippet += '\\$\${1:property})\n' + this.getIndentation() + '{';
+        snippet += '\\$\${1:property})';
 
         let constructorClosingLine;
 
         // Add all previous property assignments to the snippet.
-        for (var line = constructorStartLineNumber+constructorLineText.match(/\n/g).length-1; line < declarations.constructorClosingLineNumber; line++) {
+        for (var line = constructorStartLineNumber; line < declarations.constructorClosingLineNumber; line++) {
             let propertyAssignment = this.activeEditor().document.lineAt(line + 1);
 
             constructorClosingLine = propertyAssignment;
@@ -282,22 +282,11 @@ class PropertyInserter {
 
         let line = range.start.line;
 
-        let startLine = null;
-        let text = "";
-
         for (line; line < doc.lineCount; line++) {
             let textLine = doc.lineAt(line).text;
 
-            if (startLine === null && /function __construct/.test(textLine)) {
-                startLine = line;
-            }
-
-            if (startLine !== null) {
-                text += textLine + "\n";
-            }
-
-            if (startLine !== null && /\{/.test(textLine)) {
-                return { line: startLine, textLine: text };
+            if (/function __construct/.test(textLine)) {
+                return { line, textLine };
             }
         }
     }
