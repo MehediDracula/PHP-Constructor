@@ -41,7 +41,7 @@
                 "phpConstructor.visibility": {
                     "type": "string",
                     "default": "protected",
-                    "enum": ["protected", "private", "public"],
+                    "enum": ["public", "protected", "private"],
                     "description": "Default property visibility modifier"
                 },
                 "phpConstructor.constructorVisibility": {

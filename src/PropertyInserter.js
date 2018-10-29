@@ -88,7 +88,7 @@ class PropertyInserter {
         snippet = this.getIndentation();
 
         if (this.config('choosePropertyVisibility', false)) {
-            snippet += '${2|'+this.getVisibilityChoice(this.config('visibility', 'protected'))+'|}';
+            snippet += '${2|' + this.getVisibilityChoice(this.config('visibility', 'protected'))+'|}';
         } else {
             snippet += this.config('visibility', 'protected');
         }
@@ -96,13 +96,13 @@ class PropertyInserter {
         snippet += ' \\$${1:property};\n\n' + this.getIndentation();
 
         if (this.config('chooseConstructorVisibility', false)) {
-            snippet += '${3|'+this.getVisibilityChoice(this.config('constructorVisibility', 'public'))+'|}';
+            snippet += '${3|' + this.getVisibilityChoice(this.config('constructorVisibility', 'public'))+'|}';
         } else {
             snippet += this.config('visibility', 'public');
         }
 
         snippet += ' function __construct(\\$${1:property})\n' +
-        this.getIndentation() + '{\n' +
+            this.getIndentation() + '{\n' +
             this.getIndentation(2) + '\\$this->${1:property} = \\$${1:property};$0\n' +
             this.getIndentation() + '}';
 
@@ -171,7 +171,7 @@ class PropertyInserter {
         let constructorClosingLine;
 
         // Add all previous property assignments to the snippet.
-        for (var line = constructorStartLineNumber; line < declarations.constructorClosingLineNumber; line++) {
+        for (let line = constructorStartLineNumber; line < declarations.constructorClosingLineNumber; line++) {
             let propertyAssignment = this.activeEditor().document.lineAt(line + 1);
 
             constructorClosingLine = propertyAssignment;
@@ -302,20 +302,24 @@ class PropertyInserter {
     getIndentation(level = 1) {
         let singleLevel;
         let activeResource = vscode.window.activeTextEditor.document.uri;
-        if (!vscode.workspace.getConfiguration('editor', activeResource).get('insertSpaces')) {
+
+        if (! vscode.workspace.getConfiguration('editor', activeResource).get('insertSpaces')) {
             singleLevel = '\t';
         } else {
-            singleLevel = " ".repeat(vscode.workspace.getConfiguration('editor', activeResource).get('tabSize'));
+            singleLevel = ' '.repeat(vscode.workspace.getConfiguration('editor', activeResource).get('tabSize'));
         }
+
         return singleLevel.repeat(level);
     }
 
     getVisibilityChoice(defaultValue) {
-        let visibilityChoices = ["public", "protected", "private"];
+        let visibilityChoices = ['public', 'protected', 'private'];
+
         if (visibilityChoices.indexOf(defaultValue) !== -1) {
             visibilityChoices.splice(visibilityChoices.indexOf(defaultValue), 1);
         }
-        return [defaultValue, ...visibilityChoices].join(",");
+
+        return [defaultValue, ...visibilityChoices].join(',');
     }
 
     config(key, defaultValue) {
