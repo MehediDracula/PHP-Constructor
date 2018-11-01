@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to the "php-constructor" extension will be documented in this file.
 
+## [0.1.1]
+- Improve extension settings [#7](https://github.com/MehediDracula/PHP-Constructor/issues/7)
+
+## [0.1.0]
+- Adapt indentation from vscode settings [#5](https://github.com/MehediDracula/PHP-Constructor/issues/5)
+
 ## [0.0.10]
 - Add config for choosing property visibility
 - Add config for choosing constructor visibility
