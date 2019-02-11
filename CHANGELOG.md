@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "php-constructor" extension will be documented in this file.
 
+## [0.1.2]
+- Fix constructor is always using property visibility; fix [#9](https://github.com/MehediDracula/PHP-Constructor/issues/9)
+
 ## [0.1.1]
 - Improve extension settings [#7](https://github.com/MehediDracula/PHP-Constructor/issues/7)
 
