@@ -98,7 +98,7 @@ class PropertyInserter {
         if (this.config('chooseConstructorVisibility', false)) {
             snippet += '${3|' + this.getVisibilityChoice(this.config('constructorVisibility', 'public'))+'|}';
         } else {
-            snippet += this.config('visibility', 'public');
+            snippet += this.config('constructorVisibility', 'public');
         }
 
         snippet += ' function __construct(\\$${1:property})\n' +
