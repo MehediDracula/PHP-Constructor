@@ -4,7 +4,7 @@
     "description": "Initialize php constructor properties",
     "version": "0.1.2",
     "publisher": "MehediDracula",
-    "author": "Mehedi Hassan <MehediDracula@gmail.com>",
+    "author": "Mehedi Hasan <mehedi5531@gmail.com>",
     "license": "SEE LICENSE IN LICENSE",
     "engines": {
         "vscode": "^1.15.0"
