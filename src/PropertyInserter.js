@@ -306,10 +306,20 @@ class PropertyInserter {
         if (! vscode.workspace.getConfiguration('editor', activeResource).get('insertSpaces')) {
             singleLevel = '\t';
         } else {
-            singleLevel = ' '.repeat(vscode.workspace.getConfiguration('editor', activeResource).get('tabSize'));
+            singleLevel = ' '.repeat(this.getTabSize());
         }
 
         return singleLevel.repeat(level);
+    }
+
+    getTabSize() {
+        let phpTabSize = vscode.workspace.getConfiguration('[php]')['editor.tabSize'];
+
+        if (phpTabSize) {
+            return phpTabSize;
+        }
+
+        return vscode.workspace.getConfiguration('editor').get('tabSize');
     }
 
     getVisibilityChoice(defaultValue) {
